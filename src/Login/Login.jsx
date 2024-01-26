@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import app from "../firebase/firebase.init";
 import {
   getAuth,
+  GithubAuthProvider,
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
@@ -26,6 +27,18 @@ const Login = () => {
 
     console.log("google is clicked");
   };
+  const githubProvider = new GithubAuthProvider();
+  const handleGithub = () => {
+    signInWithPopup(auth, githubProvider)
+      .then((result) => {
+        const logged = result.user;
+        setUser(logged);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
@@ -48,7 +61,10 @@ const Login = () => {
       {user ? (
         <button onClick={handleSignOut}>Sign OUt</button>
       ) : (
-        <button onClick={handleGoogle}> Google </button>
+        <div>
+          <button onClick={handleGoogle}> Google </button>
+          <button onClick={handleGithub}>GitHub</button>
+        </div>
       )}
     </div>
   );
