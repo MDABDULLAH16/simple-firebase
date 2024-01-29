@@ -4,11 +4,13 @@ import {
   getAuth,
   GithubAuthProvider,
   GoogleAuthProvider,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
 import "./Logni.css";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [user, setUser] = useState(null);
@@ -62,12 +64,19 @@ const Login = () => {
       .then((result) => {
         const logged = result.user;
         console.log(logged);
+        if (!logged.emailVerified) {
+          alert("email vaified first!!");
+          return;
+        }
         setUser(logged);
       })
       .catch((error) => {
         console.log(error);
       });
+    event.target.email.value = "";
+    event.target.password.value = "";
   };
+
   return (
     <div>
       <div className='login-container'>
@@ -82,6 +91,9 @@ const Login = () => {
             <input type='password' id='password' name='password' required />
           </div>
           <input type='submit' className='submit-button' />
+          <p>
+            Have'n You any Account ? <Link to='/register'>Register</Link>
+          </p>
         </form>
       </div>
       {user && (
