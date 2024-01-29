@@ -95,7 +95,12 @@ const Login = () => {
       });
     console.log("reff email:", email);
   };
-
+  const [showPassword, setShowPassword] = useState(false);
+  const handleShowPassword = (event) => {
+    event.preventDefault();
+    setShowPassword(!showPassword);
+    console.log("show pass clicked");
+  };
   return (
     <div>
       <div className='login-container'>
@@ -113,7 +118,13 @@ const Login = () => {
           </div>
           <div className='form-group unique-form-group'>
             <label>Password:</label>
-            <input type='password' id='password' name='password' required />
+            <input
+              type={showPassword ? "text" : "password"}
+              id='password'
+              name='password'
+              required
+            />
+            <button onClick={handleShowPassword}>show Password</button>
           </div>
           <p>{error}</p>
           <input type='submit' className='submit-button' />
@@ -127,7 +138,8 @@ const Login = () => {
       </div>
       {user && (
         <div>
-          <h1> Name:{user.email}</h1>
+          <h1> Name:{user.displayName}</h1>
+          <h2>Email: {user.email}</h2>
           <img src={user.photoURL} alt='' />
         </div>
       )}
