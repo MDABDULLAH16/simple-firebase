@@ -83,6 +83,9 @@ const Login = () => {
   const handleResetPassword = (event) => {
     event.preventDefault();
     const email = emailRef.current.value;
+    if (!email) {
+      alert("please provide you email for reset password");
+    }
     sendPasswordResetEmail(auth, email)
       .then(() => {
         alert("please cheek you email");
@@ -101,7 +104,7 @@ const Login = () => {
           <div className='form-group unique-form-group'>
             <label>Email:</label>
             <input
-              type='text'
+              type='email'
               id='username'
               name='email'
               ref={emailRef}
