@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import app from "../firebase/firebase.init";
 import {
   getAuth,
   GithubAuthProvider,
   GoogleAuthProvider,
-  sendEmailVerification,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -14,6 +14,8 @@ import { Link } from "react-router-dom";
 
 const Login = () => {
   const [user, setUser] = useState(null);
+  const [error, setError] = useState("");
+  const emailRef = useRef();
 
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
@@ -58,8 +60,9 @@ const Login = () => {
     const form = event.target;
     const email = form.email.value;
     const password = form.password.value;
-    console.log(email, password);
 
+    console.log(email, password);
+    setError("");
     signInWithEmailAndPassword(auth, email, password)
       .then((result) => {
         const logged = result.user;
@@ -68,13 +71,26 @@ const Login = () => {
           alert("email vaified first!!");
           return;
         }
+        setError("");
         setUser(logged);
       })
       .catch((error) => {
-        console.log(error);
+        setError(error.message);
       });
     event.target.email.value = "";
     event.target.password.value = "";
+  };
+  const handleResetPassword = (event) => {
+    event.preventDefault();
+    const email = emailRef.current.value;
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        alert("please cheek you email");
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
+    console.log("reff email:", email);
   };
 
   return (
@@ -84,13 +100,23 @@ const Login = () => {
           <h2 className='form-title'>Login</h2>
           <div className='form-group unique-form-group'>
             <label>Email:</label>
-            <input type='text' id='username' name='email' required />
+            <input
+              type='text'
+              id='username'
+              name='email'
+              ref={emailRef}
+              required
+            />
           </div>
           <div className='form-group unique-form-group'>
             <label>Password:</label>
             <input type='password' id='password' name='password' required />
           </div>
+          <p>{error}</p>
           <input type='submit' className='submit-button' />
+          <button onClick={handleResetPassword} className='submit-button form'>
+            Reset Password
+          </button>
           <p>
             Have'n You any Account ? <Link to='/register'>Register</Link>
           </p>
